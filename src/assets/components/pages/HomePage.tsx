@@ -16,7 +16,10 @@ const Home = () => {
   return (
     <div className="flex flex-col gap-2 items-center justify-center min-h-screen bg-gray-100">
       <Label text={`Welcome, ${user.name}`} />
-      <button className="bg-blue-500" onClick={handleLogout}>
+      <button
+        className="w-23 bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition duration-200"
+        onClick={handleLogout}
+      >
         {" "}
         Logout
       </button>

@@ -23,13 +23,16 @@ function saveUsers(users) {
 app.post("/api/login", (req, res) => {
   try {
     const { email, password } = req.body;
-    const data = readUsers();         // ← this returns { users: [...] }
-    const users = data.users;         // ← get the actual array
+    const data = readUsers();
+    const users = Array.isArray(data) ? data : data?.users;
+
+    if (!Array.isArray(users)) {
+      return res.status(500).json({ message: "Invalid user data structure" });
+    }
 
     const user = users.find(
       (u) => u.email === email && u.password === password
     );
-
     if (user) {
       res.json({ user });
     } else {
@@ -45,35 +48,50 @@ app.post("/api/login", (req, res) => {
 // Sign-up route
 app.post("/api/signup", (req, res) => {
   const { email, password, name } = req.body;
-  const users = readUsers();
+  const data = readUsers();
+
+  const users = Array.isArray(data) ? data : data.users;
+
+  if (!Array.isArray(users)) {
+    return res.status(500).json({ message: "Invalid users data" });
+  }
 
   if (users.find((u) => u.email === email)) {
     return res.status(400).json({ success: false, message: "Email already exists" });
   }
 
   const newUser = {
-    id: Date.now(),
+    name,
     email,
     password,
-    name
+    id: Date.now(),
+
   };
 
   users.push(newUser);
-  saveUsers(users);
+  saveUsers(users); // Save full array back to the file
 
-  res.json({ success: true, user: { id: newUser.id, email: newUser.email, name: newUser.name } });
+  res.json({
+    success: true,
+    user: { id: newUser.id, email: newUser.email, name: newUser.name }
+  });
 });
-
 app.get("/", (req, res) => {
   try {
-    const users = readUsers();
-    res.json(users);
+    const data = readUsers();
+    const users = Array.isArray(data) ? data : data.users;
+
+    if (!Array.isArray(users)) {
+      throw new Error("Users data is not a valid array");
+    }
+
+    const userList = users.map((user) => JSON.stringify(user)).join("\n");
+    res.type("text/plain").send(userList);
   } catch (err) {
     console.error("Error reading users:", err);
-    res.status(500).json({ message: "Error loading users" });
+    res.status(500).send("Error loading users");
   }
 });
-
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });

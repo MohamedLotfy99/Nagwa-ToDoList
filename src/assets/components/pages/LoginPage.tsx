@@ -63,7 +63,7 @@ const LoginPage = () => {
           <input
             id="remember"
             type="checkbox"
-            className="mr-2"
+            className="mr-2 mb-0.5"
             checked={rememberMe}
             onChange={(e) => setRememberMe(e.target.checked)}
           />
