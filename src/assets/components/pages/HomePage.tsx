@@ -1,15 +1,24 @@
 import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import Label from "../atoms/Label";
 
 const Home = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const user = location.state?.user; // Get user data from location state
+  const user =
+    location.state?.user || JSON.parse(localStorage.getItem("user") || "null");
 
   const handleLogout = () => {
     localStorage.removeItem("user"); // Remove token from local storage
-    navigate("/"); // Pass user data to HomePage
+    navigate("/", { replace: true }); // Pass user data to HomePage
   };
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/", { replace: true });
+    }
+  }, [navigate, user]);
+
   if (!user) {
     return <p>Please Log in to access this page.</p>;
   }
@@ -20,7 +29,6 @@ const Home = () => {
         className="w-23 bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition duration-200"
         onClick={handleLogout}
       >
-        {" "}
         Logout
       </button>
     </div>

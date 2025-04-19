@@ -1,7 +1,7 @@
 import TextInput from "../atoms/TextInput";
 import Label from "../atoms/Label";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -9,6 +9,13 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    const rememberedUser = localStorage.getItem("user");
+    if (rememberedUser) {
+      navigate("/HomePage", { state: { user: JSON.parse(rememberedUser) } });
+    }
+  }, [navigate]);
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
