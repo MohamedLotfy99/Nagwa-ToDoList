@@ -3,29 +3,27 @@ import Label from "../atoms/Label";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
-const LoginPage = () => {
+const SignupPage = () => {
   const navigate = useNavigate();
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
 
-  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost:5000/api/login", {
+      const res = await fetch("http://localhost:5000/api/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ name, email, password }),
       });
 
       const data = await res.json();
 
       if (res.ok) {
-        if (rememberMe) {
-          localStorage.setItem("user", JSON.stringify(data.user)); // Save token to local storage
-        }
-        navigate("/HomePage", { state: { user: data.user } }); // Pass user data to HomePage
+        // Optional: navigate directly to login page after successful signup
+        navigate("/");
       } else {
         setError(data.message);
       }
@@ -37,11 +35,20 @@ const LoginPage = () => {
 
   return (
     <form
-      onSubmit={handleLogin}
+      onSubmit={handleSignup}
       className="flex items-center justify-center min-h-screen"
     >
       <div className="bg-white p-8 rounded-2xl shadow-md w-80 border-2 border-yellow-300">
-        <h2 className="font-bold text-center mb-6 text-black">Login</h2>
+        <h2 className="font-bold text-center mb-6 text-black">Sign Up</h2>
+
+        <Label text="Name:" />
+        <TextInput
+          placeholder="John Doe"
+          value={name}
+          type="text"
+          setValue={setName}
+        />
+
         <Label text="Email:" />
         <TextInput
           placeholder="example@email.com"
@@ -49,42 +56,32 @@ const LoginPage = () => {
           type="email"
           setValue={setEmail}
         />
-        <div>
-          <Label text="Password:" />
-          <TextInput
-            placeholder="Enter password"
-            value={password}
-            type="password"
-            setValue={setPassword}
-          />
-        </div>
 
-        <div className="flex items-center mb-4">
-          <input
-            id="remember"
-            type="checkbox"
-            className="mr-2"
-            checked={rememberMe}
-            onChange={(e) => setRememberMe(e.target.checked)}
-          />
-          <Label text="Remember me" />
-        </div>
+        <Label text="Password:" />
+        <TextInput
+          placeholder="Create a password"
+          value={password}
+          type="password"
+          setValue={setPassword}
+        />
 
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition duration-200"
+          className="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 transition duration-200 mt-4"
         >
-          Login
+          Sign Up
         </button>
+
         {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+
         <div className="flex justify-center mt-4">
           <p className="text-sm text-gray-600">
-            Don't have an account?{" "}
+            Already have an account?{" "}
             <span
               className="text-blue-600 cursor-pointer hover:underline"
-              onClick={() => navigate("/SignupPage")}
+              onClick={() => navigate("/")}
             >
-              Sign up
+              Log in
             </span>
           </p>
         </div>
@@ -93,4 +90,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default SignupPage;

@@ -5,12 +5,18 @@ import "./index.css";
 import HomePage from "./assets/components/pages/HomePage.tsx";
 import LoginPage from "./assets/components/pages/LoginPage.tsx";
 import NotFoundPage from "./assets/components/pages/NotFoundPage.tsx";
+import SignupPage from "./assets/components/pages/SignupPage.tsx";
 
 const router = createBrowserRouter([
   { path: "/", element: <LoginPage />, errorElement: <NotFoundPage /> },
   {
     path: "/HomePage",
     element: <HomePage />,
+    errorElement: <NotFoundPage />,
+  },
+  {
+    path: "/SignupPage",
+    element: <SignupPage />,
     errorElement: <NotFoundPage />,
   },
 ]);
