@@ -30,7 +30,9 @@ const LoginPage = () => {
 
       if (res.ok) {
         if (rememberMe) {
-          localStorage.setItem("user", JSON.stringify(data.user)); // Save token to local storage
+          localStorage.setItem("user", JSON.stringify(data.user));
+        } else {
+          sessionStorage.setItem("user", JSON.stringify(data.user));
         }
         navigate("/HomePage", { state: { user: data.user } }); // Pass user data to HomePage
       } else {

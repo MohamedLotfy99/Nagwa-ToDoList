@@ -6,18 +6,19 @@ import HomePage from "./assets/components/pages/HomePage.tsx";
 import LoginPage from "./assets/components/pages/LoginPage.tsx";
 import NotFoundPage from "./assets/components/pages/NotFoundPage.tsx";
 import SignupPage from "./assets/components/pages/SignupPage.tsx";
+import Layout from "./Layout.tsx";
+import TodoListPage from "./assets/components/pages/TodoListPage.tsx";
 
 const router = createBrowserRouter([
-  { path: "/", element: <LoginPage />, errorElement: <NotFoundPage /> },
   {
-    path: "/HomePage",
-    element: <HomePage />,
+    element: <Layout />,
     errorElement: <NotFoundPage />,
-  },
-  {
-    path: "/SignupPage",
-    element: <SignupPage />,
-    errorElement: <NotFoundPage />,
+    children: [
+      { path: "/", element: <LoginPage /> },
+      { path: "/HomePage", element: <HomePage /> },
+      { path: "/SignupPage", element: <SignupPage /> },
+      { path: "/todo/:id", element: <TodoListPage /> },
+    ],
   },
 ]);
 

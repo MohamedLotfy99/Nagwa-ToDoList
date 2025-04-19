@@ -1,6 +1,17 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
-import Label from "../atoms/Label";
+import { useEffect, useState } from "react";
+import TodoListCard from "../atoms/ToDoListCard"; // adjust path if needed
+
+interface Task {
+  title: string;
+  completed: boolean;
+}
+
+interface TodoList {
+  id: number;
+  title: string;
+  tasks: Task[];
+}
 
 const Home = () => {
   const navigate = useNavigate();
@@ -8,10 +19,7 @@ const Home = () => {
   const user =
     location.state?.user || JSON.parse(localStorage.getItem("user") || "null");
 
-  const handleLogout = () => {
-    localStorage.removeItem("user"); // Remove token from local storage
-    navigate("/", { replace: true }); // Pass user data to HomePage
-  };
+  const [todoLists, setTodoLists] = useState<TodoList[]>([]);
 
   useEffect(() => {
     if (!user) {
@@ -19,18 +27,38 @@ const Home = () => {
     }
   }, [navigate, user]);
 
+  const createNewTodoList = () => {
+    const newList: TodoList = {
+      id: Date.now(),
+      title: `List #${todoLists.length + 1}`,
+      tasks: [],
+    };
+    setTodoLists([...todoLists, newList]);
+  };
+
   if (!user) {
-    return <p>Please Log in to access this page.</p>;
+    return <p>Please log in to access this page.</p>;
   }
+
   return (
-    <div className="flex flex-col gap-2 items-center justify-center min-h-screen bg-gray-100">
-      <Label text={`Welcome, ${user.name}`} />
-      <button
-        className="w-23 bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition duration-200"
-        onClick={handleLogout}
-      >
-        Logout
-      </button>
+    <div className="min-h-screen bg-#242424 p-8">
+      <div className="grid gap-6">
+        {todoLists.map((list) => (
+          <TodoListCard
+            key={list.id}
+            list={list}
+            onClick={() => navigate(`/todo/${list.id}`, { state: { list } })} // Pass the list to the TodoListPage
+          />
+        ))}
+      </div>
+      <div className="flex items-center mt-6">
+        <button
+          onClick={createNewTodoList}
+          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition cursor-pointer"
+        >
+          ➕ Create New To-Do List
+        </button>
+      </div>
     </div>
   );
 };
