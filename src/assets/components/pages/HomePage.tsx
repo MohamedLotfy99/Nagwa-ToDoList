@@ -47,7 +47,9 @@ const Home = () => {
           <TodoListCard
             key={list.id}
             list={list}
-            onClick={() => navigate(`/todo/${list.id}`, { state: { list } })} // Pass the list to the TodoListPage
+            onClick={() =>
+              navigate(`/todo/${list.id}`, { state: { list, user } })
+            } // Pass the list to the TodoListPage
           />
         ))}
       </div>
