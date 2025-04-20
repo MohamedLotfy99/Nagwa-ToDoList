@@ -25,15 +25,48 @@ const Home = () => {
     if (!user) {
       navigate("/", { replace: true });
     }
+    if (user) {
+      fetch(`http://localhost:5000/api/todolists/${user.id}`)
+        .then((res) => res.json())
+        .then((data) => setTodoLists(data || []))
+        .catch((err) => console.error("Error fetching to-do lists:", err));
+    }
   }, [navigate, user]);
 
-  const createNewTodoList = () => {
+  const handleDeleteList = async (id: number) => {
+    const updatedLists = todoLists.filter((list) => list.id !== id);
+    setTodoLists(updatedLists);
+
+    try {
+      await fetch(`http://localhost:5000/api/todolists/${user.id}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedLists),
+      });
+    } catch (err) {
+      console.error("Failed to update server after deletion:", err);
+    }
+  };
+
+  const createNewTodoList = async () => {
     const newList: TodoList = {
       id: Date.now(),
       title: `List #${todoLists.length + 1}`,
       tasks: [],
     };
-    setTodoLists([...todoLists, newList]);
+    const updatedLists = [...todoLists, newList];
+    setTodoLists(updatedLists);
+
+    try {
+      await fetch(`http://localhost:5000/api/todolists/${user.id}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedLists),
+      });
+    } catch (err) {
+      console.error("Failed to update server:", err);
+      // Optional: revert local state or show error
+    }
   };
 
   if (!user) {
@@ -47,8 +80,11 @@ const Home = () => {
           <TodoListCard
             key={list.id}
             list={list}
+            onDelete={() => {
+              handleDeleteList(list.id);
+            }}
             onClick={() =>
-              navigate(`/todo/${list.id}`, { state: { list, user } })
+              navigate(`/todo/${list.id}`, { state: { list, user, todoLists } })
             } // Pass the list to the TodoListPage
           />
         ))}

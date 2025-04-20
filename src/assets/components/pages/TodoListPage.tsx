@@ -13,13 +13,14 @@ const TodoListPage = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [title, setTitle] = useState(list?.title || "");
 
-  const addTask = () => {
+  const createNewTask = async () => {
     const newTask: Task = {
       id: Date.now(),
       title: `Task #${tasks.length + 1}`,
       completed: false,
     };
-    setTasks((prev) => [...prev, newTask]);
+    const updatedTasks = [...tasks, newTask];
+    setTasks(updatedTasks);
   };
 
   const updateTask = (id: number, newTitle: string) => {
@@ -93,7 +94,7 @@ const TodoListPage = () => {
       </ul>
 
       <button
-        onClick={addTask}
+        onClick={createNewTask}
         className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center space-x-2"
       >
         <span className="text-white text-2xl font-bold">+</span>

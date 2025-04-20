@@ -65,7 +65,7 @@ app.post("/api/signup", (req, res) => {
     email,
     password,
     id: Date.now(),
-
+    todoLists: [], // Initialize with an empty array of to-do lists
   };
 
   users.push(newUser);
@@ -76,6 +76,37 @@ app.post("/api/signup", (req, res) => {
     user: { id: newUser.id, email: newUser.email, name: newUser.name }
   });
 });
+
+// Get to-do lists for a user
+app.get("/api/todolists/:userId", (req, res) => {
+  const { userId } = req.params;
+  const users = readUsers();
+  const user = users.find((u) => u.id === Number(userId));
+
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  res.json(user.todoLists || []);
+});
+
+// Save updated to-do lists for a user
+app.post("/api/todolists/:userId", (req, res) => {
+  const { userId } = req.params;
+  const updatedLists = req.body;
+
+  const users = readUsers();
+  const userIndex = users.findIndex((u) => u.id === Number(userId));
+
+  if (userIndex === -1) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  users[userIndex].todoLists = updatedLists;
+  saveUsers(users);
+  res.json({ success: true });
+});
+
 app.get("/", (req, res) => {
   try {
     const data = readUsers();

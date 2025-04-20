@@ -23,6 +23,31 @@
     "name": "Lotfy",
     "email": "lotf@aa.com",
     "password": "aabbcc",
-    "id": 1745032125816
+    "id": 1745032125816,
+    "todoLists": [
+      {
+        "id": 1745115322107,
+        "title": "List #1",
+        "tasks": []
+      }
+    ]
+  },
+  {
+    "name": "aa",
+    "email": "aa@a.com",
+    "password": "aa",
+    "id": 1745115417118,
+    "todoLists": [
+      {
+        "id": 1745115432458,
+        "title": "List #1",
+        "tasks": []
+      },
+      {
+        "id": 1745115438274,
+        "title": "List #2",
+        "tasks": []
+      }
+    ]
   }
 ]
