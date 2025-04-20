@@ -1,5 +1,5 @@
 import { useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface Task {
   id: number;
@@ -7,20 +7,61 @@ interface Task {
   completed: boolean;
 }
 
+interface TodoList {
+  id: number;
+  title: string;
+  tasks: Task[];
+}
+
 const TodoListPage = () => {
   const location = useLocation();
+  const user =
+    location.state?.user || JSON.parse(localStorage.getItem("user") || "null");
+
   const list = location.state?.list; // Assuming you pass the list from the HomePage
   const [tasks, setTasks] = useState<Task[]>([]);
   const [title, setTitle] = useState(list?.title || "");
+  const [allTodoLists, setAllTodoLists] = useState<TodoList[]>(
+    location.state?.todoLists || []
+  );
 
-  const createNewTask = async () => {
+  useEffect(() => {
+    if (user) {
+      setTasks(list.tasks);
+    }
+  }, [user, list]);
+
+  const createNewTask = async (e?: React.MouseEvent<HTMLButtonElement>) => {
+    e?.preventDefault(); // ✅ This prevents the page reload
+
     const newTask: Task = {
       id: Date.now(),
       title: `Task #${tasks.length + 1}`,
       completed: false,
     };
+
     const updatedTasks = [...tasks, newTask];
     setTasks(updatedTasks);
+
+    const updatedList = {
+      ...list,
+      tasks: updatedTasks,
+    };
+
+    const updatedTodoLists = allTodoLists.map((l) =>
+      l.id === updatedList.id ? updatedList : l
+    );
+    setAllTodoLists(updatedTodoLists);
+
+    try {
+      await fetch(`http://localhost:5000/api/todolists/${user.id}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedTodoLists),
+      });
+    } catch (err) {
+      console.error("Failed to update tasks on the server:", err);
+    }
   };
 
   const updateTask = (id: number, newTitle: string) => {
@@ -94,7 +135,7 @@ const TodoListPage = () => {
       </ul>
 
       <button
-        onClick={createNewTask}
+        onClick={(e) => createNewTask(e)}
         className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center space-x-2"
       >
         <span className="text-white text-2xl font-bold">+</span>
