@@ -1,13 +1,5 @@
-interface Task {
-  title: string;
-  completed: boolean;
-}
-
-interface TodoList {
-  id: number;
-  title: string;
-  tasks: Task[];
-}
+import { Task, TodoList } from "../../types";
+import { ListTodo } from "lucide-react";
 
 interface Props {
   list: TodoList;
@@ -36,7 +28,8 @@ const TodoListCard = ({ list, onClick, onDelete }: Props) => {
       </button>
 
       <div onClick={onClick}>
-        <h2 className="text-xl font-semibold mb-2 text-gray-800">
+        <h2 className="text-xl font-semibold mb-2 text-gray-800 flex items-center gap-3">
+          <ListTodo className="w-5 h-5 text-blue-600" />
           {list.title}
         </h2>
         <div className="w-full bg-gray-200 h-4 rounded overflow-hidden">

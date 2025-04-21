@@ -46,14 +46,16 @@ const TodoListPage = () => {
             />
             <input
               className="flex-1 mx-2 border-b border-gray-300 focus:outline-none"
+              placeholder="New Task"
               value={task.title}
               onChange={(e) => updateTask(task.id, e.target.value)}
             />
             <button
               onClick={() => deleteTask(task.id)}
-              className="text-red-500 font-bold"
+              className="text-red-600 font-bold text-2xl hover:text-red-800 cursor-pointer"
+              title="Delete list"
             >
-              ✕
+              ×
             </button>
           </li>
         ))}
