@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import nagwaLogo from "../nagwaLogo.png";
-import WhiteButton from "./atoms/WhiteButton";
+import nagwaLogo from "../assets/nagwaLogo.png";
+import WhiteButton from "../components/atoms/WhiteButton";
 
 const NavBar = () => {
   const navigate = useNavigate();

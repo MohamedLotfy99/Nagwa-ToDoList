@@ -115,6 +115,25 @@ app.get("/api/todolists/:userId", (req, res) => {
   res.json(user.todoLists || []);
 });
 
+app.get("/api/todolists/:userId/:listId", (req, res) => {
+  const { userId, listId } = req.params;
+  const users = readUsers();
+  const user = users.find((u) => u.id === Number(userId));
+
+  if (!user) {
+     res.status(404).json({ message: "User not found" });
+     return
+  }
+
+  const list = user.todoLists.find((l) => l.id === Number(listId));
+  if (!list) {
+      res.status(404).json({ message: "List not found" });
+      return
+    }
+
+  res.json(list || []);
+});
+
 // Save updated to-do lists for a user
 app.post("/api/todolists/:userId", (req, res) => {
   const { userId } = req.params;
