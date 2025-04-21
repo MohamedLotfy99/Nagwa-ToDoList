@@ -1,0 +1,105 @@
+[
+  {
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "password": "password123"
+  },
+  {
+    "name": "Smith John",
+    "email": "smith.john@example.com",
+    "password": "passBlueBus"
+  },
+  {
+    "name": "Caronlina Adams",
+    "email": "carolina.adams@example.com",
+    "password": "passGreenBus"
+  },
+  {
+    "name": "Emila Smith",
+    "email": "emila.smith@example.com",
+    "password": "12111990"
+  },
+  {
+    "name": "Lotfy",
+    "email": "lotf@aa.com",
+    "password": "aabbcc",
+    "id": 1745032125816,
+    "todoLists": [
+      {
+        "id": 1745120721808,
+        "title": "List #1",
+        "tasks": [
+          {
+            "id": 1745190716574,
+            "title": "Task #1",
+            "completed": false
+          },
+          {
+            "id": 1745192902578,
+            "title": "Task #2",
+            "completed": false
+          },
+          {
+            "id": 1745192903337,
+            "title": "Task #3",
+            "completed": false
+          },
+          {
+            "id": 1745192947449,
+            "title": "Task #4",
+            "completed": false
+          },
+          {
+            "id": 1745193045706,
+            "title": "Task #5",
+            "completed": false
+          },
+          {
+            "id": 1745193212394,
+            "title": "Task #6",
+            "completed": false
+          }
+        ]
+      },
+      {
+        "id": 1745190157829,
+        "title": "List #2",
+        "tasks": [
+          {
+            "id": 1745193550802,
+            "title": "Task #1",
+            "completed": false
+          },
+          {
+            "id": 1745193552922,
+            "title": "mama",
+            "completed": false
+          },
+          {
+            "id": 1745193562938,
+            "title": "Task #3",
+            "completed": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "aa",
+    "email": "aa@a.com",
+    "password": "aa",
+    "id": 1745115417118,
+    "todoLists": [
+      {
+        "id": 1745115432458,
+        "title": "List #1",
+        "tasks": []
+      },
+      {
+        "id": 1745115438274,
+        "title": "List #2",
+        "tasks": []
+      }
+    ]
+  }
+]

@@ -28,11 +28,16 @@ const TodoListPage = () => {
   useEffect(() => {
     if (user) {
       setTasks(list.tasks);
+      fetch(`http://localhost:5000/api/tasks/${user.id}/${list.id}`)
+        .then((res) => res.json())
+        .then((data) => setTasks(data || []))
+        .catch((err) => console.error("Error fetching to-do lists:", err));
     }
   }, [user, list]);
 
   const createNewTask = async (e?: React.MouseEvent<HTMLButtonElement>) => {
     e?.preventDefault(); // ✅ This prevents the page reload
+    e?.stopPropagation();
 
     const newTask: Task = {
       id: Date.now(),
@@ -40,28 +45,40 @@ const TodoListPage = () => {
       completed: false,
     };
 
+    console.log("debug", tasks);
     const updatedTasks = [...tasks, newTask];
+    console.log("debug", updatedTasks);
     setTasks(updatedTasks);
-
+    console.log("debug", list);
     const updatedList = {
       ...list,
       tasks: updatedTasks,
     };
+    console.log("debug", updatedList);
 
+    console.log("debug", allTodoLists);
     const updatedTodoLists = allTodoLists.map((l) =>
       l.id === updatedList.id ? updatedList : l
     );
+    console.log("debug", updatedTodoLists);
     setAllTodoLists(updatedTodoLists);
 
-    try {
-      await fetch(`http://localhost:5000/api/todolists/${user.id}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedTodoLists),
-      });
-    } catch (err) {
-      console.error("Failed to update tasks on the server:", err);
-    }
+    fetch(`http://localhost:5000/api/tasks/${user.id}/${list.id}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updatedTasks),
+    });
+    // .then((response) => console.log(response))
+    // .catch((err) => console.log(err));
+    // try {
+    //   fetch(`http://localhost:5000/api/tasks/${user.id}/${list.id}`, {
+    //     method: "POST",
+    //     headers: { "Content-Type": "application/json" },
+    //     body: JSON.stringify(updatedTasks),
+    //   });
+    // } catch (err) {
+    //   console.error("Failed to update tasks on the server:", err);
+    // }
   };
 
   const updateTask = (id: number, newTitle: string) => {

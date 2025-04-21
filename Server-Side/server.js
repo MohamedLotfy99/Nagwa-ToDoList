@@ -107,6 +107,45 @@ app.post("/api/todolists/:userId", (req, res) => {
   res.json({ success: true });
 });
 
+app.post("/api/todolists/:userId", (req, res) => {
+  const { userId } = req.params;
+  const updatedLists = req.body;
+
+  const users = readUsers();
+  const userIndex = users.findIndex((u) => u.id === Number(userId));
+
+  if (userIndex === -1) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  users[userIndex].todoLists = updatedLists;
+  saveUsers(users);
+  res.json({ success: true });
+});
+
+app.post("/api/tasks/:userId/:listId", (req, res) => {
+  const { userId, listId } = req.params;
+  const updatedTasks = req.body;
+
+  const users = readUsers();
+  const userIndex = users.findIndex((u) => u.id === Number(userId));
+  
+  if (userIndex === -1) {
+    return res.status(404).json({ message: "User not found" });
+  }
+  
+  const listIndex = users[userIndex]?.todoLists?.findIndex((list) => list.id === Number(listId));
+
+    if (listIndex === -1) {
+    return res.status(404).json({ message: "List not found" });
+  }
+
+  users[userIndex].todoLists[listIndex].tasks = updatedTasks;
+  saveUsers(users);
+  res.json({ success: true });
+});
+
+
 app.get("/", (req, res) => {
   try {
     const data = readUsers();
