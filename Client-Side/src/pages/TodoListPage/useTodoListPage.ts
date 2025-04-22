@@ -10,15 +10,9 @@ const useTodoListPage = () => {
   const listId = location.state?.listId;
 
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [debounceTasks, { flush }] = useDebounce(tasks, 500);
+  const [debounceTasks] = useDebounce(tasks, 500);
   const [title, setTitle] = useState("");
   const [allTodoLists, setAllTodoLists] = useState<TodoList[]>(location.state?.todoLists || []);
-
-  useEffect(() => {
-  return () => {
-    flush(); // flush on unmount
-  };
-  }, []);
   
   useEffect(() => {
     fetch(`http://localhost:5000/api/todolists/${user.id}/${listId}`)
@@ -32,14 +26,7 @@ const useTodoListPage = () => {
   }, []);
 
   useEffect(() => {
-  if (list?.tasks) {
-    setTasks(list.tasks);
-  }
-  }, [list]);
-
-
-  useEffect(() => {
-    if (debounceTasks) {
+    if (debounceTasks && list) {
       tasksUpdateAPI(debounceTasks);
     }
   }, [debounceTasks]);
@@ -58,7 +45,7 @@ const useTodoListPage = () => {
     e?.stopPropagation();
     const newTask: Task = {
       id: Date.now(),
-      title: `Task #${tasks.length + 1}`,
+      title: undefined,
       completed: false,
     };
     const updatedTasks = [...tasks, newTask];
@@ -108,7 +95,7 @@ const useTodoListPage = () => {
       l.id === updatedList.id ? updatedList : l
     );
     setAllTodoLists(updatedTodoLists);
-
+    console.log("debug2", updatedTodoLists)
     fetch(`http://localhost:5000/api/todolists/${user.id}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
