@@ -14,6 +14,55 @@ const useTodoListPage = () => {
   const [title, setTitle] = useState("");
   const [allTodoLists, setAllTodoLists] = useState<TodoList[]>(location.state?.todoLists || []);
   
+  const [selectedTaskIndex, setSelectedTaskIndex] = useState<number | null>(null);
+
+useEffect(() => {
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if ((e.altKey || e.metaKey) && e.key === "n" ) {
+      e.preventDefault();
+      createNewTask();
+    }
+
+    if (selectedTaskIndex !== null && tasks.length > 0) {
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setSelectedTaskIndex((prev) =>
+          prev === null || prev >= tasks.length - 1 ? 0 : prev + 1
+        );
+      }
+
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setSelectedTaskIndex((prev) =>
+          prev === null || prev <= 0 ? tasks.length - 1 : prev - 1
+        );
+      }
+
+      if (e.key === " ") {
+        e.preventDefault();
+        const task = tasks[selectedTaskIndex];
+        if (task) toggleTask(task.id);
+      }
+
+      if (e.key === "Delete") {
+        e.preventDefault();
+        const task = tasks[selectedTaskIndex];
+        if (task) deleteTask(task.id);
+      }
+
+      if (e.key === "e" || e.key === "Enter") {
+        e.preventDefault();
+        const taskInput = document.getElementById(`task-input-${selectedTaskIndex}`);
+        taskInput?.focus();
+      }
+    }
+  };
+
+  document.addEventListener("keydown", handleKeyDown);
+  return () => document.removeEventListener("keydown", handleKeyDown);
+}, [tasks, selectedTaskIndex]);
+
+
   useEffect(() => {
     fetch(`http://localhost:5000/api/todolists/${user.id}/${listId}`)
       .then((res) => res.json())
@@ -107,6 +156,8 @@ const useTodoListPage = () => {
     list,
     tasks,
     title,
+    selectedTaskIndex,
+    setSelectedTaskIndex,
     createNewTask,
     updateTask,
     toggleTask,

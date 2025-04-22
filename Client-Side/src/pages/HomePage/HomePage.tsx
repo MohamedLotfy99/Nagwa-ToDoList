@@ -12,9 +12,10 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-#242424 p-8">
       <div className="grid gap-6">
-        {todoLists.map((list) => (
+        {todoLists.map((list, index) => (
           <TodoListCard
             key={list.id}
+            index={index}
             list={list}
             onDelete={() => {
               handleDeleteList(list.id);

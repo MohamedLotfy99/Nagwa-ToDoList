@@ -25,25 +25,22 @@ const NavBar = () => {
   };
 
   return (
-    console.log(user),
-    (
-      <nav className="flex justify-between items-center px-6 py-4 bg-blue-600 text-white shadow-md">
-        <div
-          className=" flex items-center gap-2 font-bold text-lg "
-          onClick={() => navigate("/HomePage", { state: { user } })}
-        >
-          <img src={nagwaLogo} alt="logo" className="w-12 h-12"></img>
-          Nagwa ToDo List
-        </div>
+    <nav className="flex justify-between items-center px-6 py-4 bg-blue-600 text-white shadow-xl/30">
+      <div
+        className=" flex items-center gap-2 font-bold text-lg "
+        onClick={() => navigate("/HomePage", { state: { user } })}
+      >
+        <img src={nagwaLogo} alt="logo" className="w-12 h-12"></img>
+        Nagwa ToDo List
+      </div>
 
-        {user && user.name && (
-          <div className="flex items-center gap-4">
-            <span>Welcome, {user.name}</span>
-            <WhiteButton onClick={handleLogout} value="Logout" />
-          </div>
-        )}
-      </nav>
-    )
+      {user && user.name && (
+        <div className="flex items-center gap-4">
+          <span>Welcome, {user.name}</span>
+          <WhiteButton onClick={handleLogout} value="Logout" />
+        </div>
+      )}
+    </nav>
   );
 };
 

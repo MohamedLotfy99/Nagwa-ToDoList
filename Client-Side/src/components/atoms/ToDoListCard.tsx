@@ -3,11 +3,12 @@ import { ListTodo } from "lucide-react";
 
 interface Props {
   list: TodoList;
+  index: number;
   onClick: () => void;
   onDelete: () => void;
 }
 
-const TodoListCard = ({ list, onClick, onDelete }: Props) => {
+const TodoListCard = ({ list, onClick, onDelete, index }: Props) => {
   const calculateProgress = (tasks: Task[]) => {
     if (tasks.length === 0) return 0;
     const completed = tasks.filter((t) => t.completed).length;
@@ -15,7 +16,11 @@ const TodoListCard = ({ list, onClick, onDelete }: Props) => {
   };
 
   return (
-    <div className="bg-white p-4 rounded shadow relative group">
+    <div
+      className={` ${
+        index % 2 === 0 ? "bg-white" : "bg-gray-200"
+      } p-4 rounded shadow relative group cursor-pointer transition duration-200 ease-in-out`}
+    >
       <button
         onClick={(e) => {
           e.stopPropagation(); // prevent triggering onClick
@@ -32,7 +37,7 @@ const TodoListCard = ({ list, onClick, onDelete }: Props) => {
           <ListTodo className="w-5 h-5 text-blue-600" />
           {list.title}
         </h2>
-        <div className="w-full bg-gray-200 h-4 rounded overflow-hidden">
+        <div className="w-full bg-gray-400 h-4 rounded-xl overflow-hidden">
           <div
             className="bg-blue-600 h-full"
             style={{ width: `${calculateProgress(list.tasks)}%` }}

@@ -1,4 +1,5 @@
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import { Grip } from "lucide-react";
 import useTodoListPage from "./useTodoListPage";
 
 const TodoListPage = () => {
@@ -6,6 +7,8 @@ const TodoListPage = () => {
     list,
     tasks,
     title,
+    selectedTaskIndex,
+    setSelectedTaskIndex,
     createNewTask,
     updateTask,
     toggleTask,
@@ -18,7 +21,7 @@ const TodoListPage = () => {
   if (!list) return <p>Loading...</p>;
 
   return (
-    <div className="p-6 max-w-2xl mx-auto">
+    <div className="p-4 px-10 w-full mx-auto">
       <input
         className="text-2xl font-bold mb-4"
         type="text"
@@ -26,7 +29,7 @@ const TodoListPage = () => {
         onChange={handleListTitleChange}
       />
 
-      <div className="bg-gray-200 w-full h-4 rounded overflow-hidden mb-4">
+      <div className="bg-gray-400 w-full h-4 rounded-3xl overflow-hidden mb-4">
         <div
           className="bg-blue-600 h-full"
           style={{ width: `${calculateProgress()}%` }}
@@ -51,15 +54,26 @@ const TodoListPage = () => {
                     <li
                       ref={provided.innerRef}
                       {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                      className="flex items-center justify-between bg-white p-5 text-black rounded shadow"
+                      className={`flex items-center my-4 justify-between ${
+                        index % 2 === 0 ? "bg-white" : "bg-gray-200"
+                      } p-5 text-black rounded shadow ${
+                        selectedTaskIndex === index
+                          ? "ring-5 ring-blue-500"
+                          : ""
+                      }`}
+                      onClick={() => setSelectedTaskIndex(index)}
                     >
+                      <span {...provided.dragHandleProps}>
+                        <Grip className="cursor-grab"></Grip>
+                      </span>
                       <input
                         type="checkbox"
+                        className="ml-3 hover:cursor-pointer"
                         checked={task.completed}
                         onChange={() => toggleTask(task.id)}
                       />
                       <input
+                        id={`task-input-${index}`}
                         className="flex-1 mx-2 border-b border-gray-300 focus:outline-none"
                         placeholder="New Task"
                         value={task.title}
