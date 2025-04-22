@@ -11,7 +11,7 @@ const useLoginPage = () => {
   useEffect(() => {
     const rememberedUser = localStorage.getItem("user");
     if (rememberedUser) {
-      navigate("/HomePage", { state: { user: JSON.parse(rememberedUser) } });
+      navigate("/Home", { state: { user: JSON.parse(rememberedUser) } });
     }
   }, [navigate]);
 
@@ -32,7 +32,7 @@ const useLoginPage = () => {
         } else {
           sessionStorage.setItem("user", JSON.stringify(data.user));
         }
-        navigate("/HomePage", { state: { user: data.user } }); // Pass user data to HomePage
+        navigate("/Home", { state: { user: data.user } }); // Pass user data to HomePage
       } else {
         setError(data.message);
       }

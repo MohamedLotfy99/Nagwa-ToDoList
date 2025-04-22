@@ -1,6 +1,10 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from "react-router-dom";
 import "./index.css";
 import HomePage from "./pages/HomePage/HomePage.tsx";
 import LoginPage from "./pages/LoginPage/LoginPage.tsx";
@@ -14,10 +18,11 @@ const router = createBrowserRouter([
     element: <Layout />,
     errorElement: <NotFoundPage />,
     children: [
-      { path: "/", element: <LoginPage /> },
-      { path: "/HomePage", element: <HomePage /> },
-      { path: "/SignupPage", element: <SignupPage /> },
-      { path: "/todo/:id", element: <TodoListPage /> },
+      { path: "/", element: <Navigate to="/Login" replace /> },
+      { path: "/Login", element: <LoginPage /> },
+      { path: "/Home", element: <HomePage /> },
+      { path: "/Signup", element: <SignupPage /> },
+      { path: "/TodoList/:id", element: <TodoListPage /> },
     ],
   },
 ]);

@@ -45,18 +45,30 @@ app.post("/api/login",(req, res) => {
   try {
     const { email, password } = req.body;
     const users = readUsers();
+    let updatedUsers;
     // const users = Array.isArray(data) ? data : data?.users;
 
     if (!Array.isArray(users)) {
       res.status(500).json({ message: "Invalid user data structure" });
       return
     }
-
+    
     const user = users.find(
       (u) => u.email === email && u.password === password
     );
     if (user) {
-      res.json({ user });
+      let newUser = user;
+      const newId= Date.now();
+      if (!user.id){
+        
+        updatedUsers = users.map((u) =>
+          u.email === email ? { ...u, id: newId, todoLists: []} : u
+        );
+        saveUsers(updatedUsers);
+        newUser = {...user, id: newId, todoLists: []};
+ // Save full array back to the file
+      }
+      res.json( {user: newUser });
     } else {
       res.status(401).json({ message: "Invalid credentials" });
     }
@@ -65,6 +77,21 @@ app.post("/api/login",(req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
+
+// app.post("/api/updateUser/", (req, res) => {
+//   const {userEmail} = req.body;
+//   const users = readUsers();
+
+//   if (!Array.isArray(users)) {
+//      res.status(500).json({ message: "Invalid users data" });
+//      return
+//   }
+//   const updatedUsers = users.map((u) => 
+//     u.email === userEmail ? { ...u, id: Date.now(), todoLists: []} : u
+//   );
+
+//   saveUsers(updatedUsers); // Save full array back to the file
+// });
 
 
 // Sign-up route

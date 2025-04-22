@@ -43,7 +43,7 @@ const LoginPage = () => {
           <input
             id="remember"
             type="checkbox"
-            className="mr-2 mb-0.5"
+            className="mr-2 mb-0.5 cursor-pointer"
             checked={rememberMe}
             onChange={(e) => setRememberMe(e.target.checked)}
           />
@@ -52,7 +52,7 @@ const LoginPage = () => {
 
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition duration-200"
+          className="w-full cursor-pointer bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition duration-200"
         >
           Login
         </button>
@@ -62,7 +62,7 @@ const LoginPage = () => {
             Don't have an account?{" "}
             <span
               className="text-blue-600 cursor-pointer hover:underline"
-              onClick={() => navigate("/SignupPage")}
+              onClick={() => navigate("/Signup")}
             >
               Sign up
             </span>

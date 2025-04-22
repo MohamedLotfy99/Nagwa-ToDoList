@@ -5,10 +5,6 @@ const Home = () => {
   const { user, todoLists, handleDeleteList, createNewTodoList, navigate } =
     useHomePage();
 
-  if (!user) {
-    return <p>Please log in to access this page.</p>;
-  }
-
   return (
     <div className="min-h-screen bg-#242424 p-8">
       <div className="grid gap-6">
@@ -21,7 +17,7 @@ const Home = () => {
               handleDeleteList(list.id);
             }}
             onClick={() =>
-              navigate(`/todo/${list.id}`, {
+              navigate(`/todoList/${list.id}`, {
                 state: { listId: list.id, user, todoLists },
               })
             } // Pass the list to the TodoListPage

@@ -1,5 +1,4 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
 import nagwaLogo from "../assets/nagwaLogo.png";
 import WhiteButton from "../components/atoms/WhiteButton";
 
@@ -9,26 +8,17 @@ const NavBar = () => {
   const user =
     location.state?.user || JSON.parse(localStorage.getItem("user") || "null");
 
-  useEffect(() => {
-    if (!user) {
-      try {
-        console.log(`${user.name}`);
-      } catch (err) {
-        console.error("Error parsing stored user", err);
-      }
-    }
-  }, [navigate, user]);
-
   const handleLogout = () => {
     localStorage.removeItem("user");
+    sessionStorage.removeItem("user");
     navigate("/", { replace: true });
   };
 
   return (
-    <nav className="flex justify-between items-center px-6 py-4 bg-blue-600 text-white shadow-xl/30">
+    <nav className="flex justify-between items-center px-6 min-w-[360px] py-4 bg-blue-600 text-white shadow-xl/30 ">
       <div
-        className=" flex items-center gap-2 font-bold text-lg "
-        onClick={() => navigate("/HomePage", { state: { user } })}
+        className=" flex items-center gap-2 font-bold text-lg cursor-pointer "
+        onClick={() => navigate("/Home", { state: { user } })}
       >
         <img src={nagwaLogo} alt="logo" className="w-12 h-12"></img>
         Nagwa ToDo List

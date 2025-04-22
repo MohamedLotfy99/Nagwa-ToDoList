@@ -4,15 +4,18 @@ import { TodoList } from "../../types";
  // Adjust the import path as necessary
 const useHomePage = () => {  const navigate = useNavigate();
   const location = useLocation();
-  const user =
-    location.state?.user || JSON.parse(localStorage.getItem("user") || "null");
+  const user = location.state?.user || JSON.parse(localStorage.getItem("user") || "null");
 
   const [todoLists, setTodoLists] = useState<TodoList[]>([]);
+  // console.log("User from HomePage:", user.email); // Debugging line
 
   useEffect(() => {
     if (!user) {
       navigate("/", { replace: true });
+      
     }
+
+
     if (user) {
       fetch(`http://localhost:5000/api/todolists/${user.id}`)
         .then((res) => res.json())

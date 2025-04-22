@@ -2,7 +2,30 @@
   {
     "name": "John Doe",
     "email": "john.doe@example.com",
-    "password": "password123"
+    "password": "password123",
+    "id": 1745364786948,
+    "todoLists": [
+      {
+        "id": 1745364812058,
+        "title": "7mada",
+        "tasks": [
+          {
+            "id": 1745364893554,
+            "title": "mama",
+            "completed": true
+          },
+          {
+            "id": 1745365166099,
+            "completed": false
+          }
+        ]
+      },
+      {
+        "id": 1745364835525,
+        "title": "New List",
+        "tasks": []
+      }
+    ]
   },
   {
     "name": "Smith John",
@@ -28,28 +51,7 @@
       {
         "id": 1745197725465,
         "title": "Groceries",
-        "tasks": [
-          {
-            "id": 1745321226618,
-            "completed": true,
-            "title": "Tea"
-          },
-          {
-            "id": 1745323355515,
-            "completed": true,
-            "title": "Milk"
-          },
-          {
-            "id": 1745342145570,
-            "completed": false,
-            "title": "Bread"
-          },
-          {
-            "id": 1745342188771,
-            "title": "Chicken",
-            "completed": false
-          }
-        ]
+        "tasks": []
       },
       {
         "id": 1745341345193,

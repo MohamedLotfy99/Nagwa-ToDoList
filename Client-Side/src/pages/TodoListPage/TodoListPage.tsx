@@ -29,7 +29,7 @@ const TodoListPage = () => {
         onChange={handleListTitleChange}
       />
 
-      <div className="bg-gray-400 w-full h-4 rounded-3xl overflow-hidden mb-4">
+      <div className="bg-gray-400 w-full h-4 min-w-[280px] rounded-3xl overflow-hidden mb-4">
         <div
           className="bg-blue-600 h-full"
           style={{ width: `${calculateProgress()}%` }}
@@ -54,7 +54,7 @@ const TodoListPage = () => {
                     <li
                       ref={provided.innerRef}
                       {...provided.draggableProps}
-                      className={`flex items-center my-4 justify-between ${
+                      className={`flex items-center my-4 min-w-[280px] justify-between ${
                         index % 2 === 0 ? "bg-white" : "bg-gray-200"
                       } p-5 text-black rounded shadow ${
                         selectedTaskIndex === index
@@ -74,7 +74,7 @@ const TodoListPage = () => {
                       />
                       <input
                         id={`task-input-${index}`}
-                        className="flex-1 mx-2 border-b border-gray-300 focus:outline-none"
+                        className="flex-1 mx-2 border-b min-w-[2px] border-gray-300 focus:outline-none"
                         placeholder="New Task"
                         value={task.title}
                         onChange={(e) => updateTask(task.id, e.target.value)}
