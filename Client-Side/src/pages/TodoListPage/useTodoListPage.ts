@@ -18,6 +18,7 @@ const useTodoListPage = () => {
 
 useEffect(() => {
   const handleKeyDown = (e: KeyboardEvent) => {
+    
     if ((e.altKey || e.metaKey) && e.key === "n" ) {
       e.preventDefault();
       createNewTask();
@@ -50,10 +51,16 @@ useEffect(() => {
         if (task) deleteTask(task.id);
       }
 
-      if (e.key === "e" || e.key === "Enter") {
+      if ((e.altKey && e.key === "e") || e.key === "Enter") {
         e.preventDefault();
         const taskInput = document.getElementById(`task-input-${selectedTaskIndex}`);
-        taskInput?.focus();
+        if (taskInput){
+          if (document.activeElement === taskInput){
+            taskInput.blur();
+          } else {
+            taskInput.focus();
+          }
+        }
       }
     }
   };
@@ -144,7 +151,7 @@ useEffect(() => {
       l.id === updatedList.id ? updatedList : l
     );
     setAllTodoLists(updatedTodoLists);
-    console.log("debug2", updatedTodoLists)
+    // console.log("debug2", updatedTodoLists)
     fetch(`http://localhost:5000/api/todolists/${user.id}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
