@@ -1,41 +1,42 @@
 import { useLocation } from "react-router-dom";
 import { useDebounce } from "use-debounce";
 import { useCallback, useEffect, useState } from "react";
-import { Task, TodoList } from "../../types"; // Adjust the import path as necessary
+import { Task, TodoList } from "../../types";
 
-const useTodoListPage = () => {  const location = useLocation();
-  const user =
-    location.state?.user || JSON.parse(localStorage.getItem("user") || "null");
-
+const useTodoListPage = () => {
+  const location = useLocation();
+  const user = location.state?.user || JSON.parse(localStorage.getItem("user") || "null");
   const [list, setList] = useState<TodoList>();
-  const listId = location.state?.listId; // Assuming you pass the list from the HomePage
+  const listId = location.state?.listId;
 
-  const [tasks, setTasks] = useState<Task[]>();
-  const [debounceTasks] = useDebounce(tasks, 500); // Assuming you have a debounce function
-  const [title, setTitle] = useState(list?.title || "");
-  const [allTodoLists, setAllTodoLists] = useState<TodoList[]>(
-    location.state?.todoLists || []
-  );
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [debounceTasks, { flush }] = useDebounce(tasks, 500);
+  const [title, setTitle] = useState("");
+  const [allTodoLists, setAllTodoLists] = useState<TodoList[]>(location.state?.todoLists || []);
 
+  useEffect(() => {
+  return () => {
+    flush(); // flush on unmount
+  };
+  }, []);
+  
   useEffect(() => {
     fetch(`http://localhost:5000/api/todolists/${user.id}/${listId}`)
       .then((res) => res.json())
       .then((data) => {
         setList(data);
-        setTitle(data?.title); // Set the title from the fetched list
+        setTitle(data?.title);
+        setTasks(data?.tasks || []);
       })
-      .catch((err) => console.error("Error fetching to-do lists:", err));
+      .catch((err) => console.error("Error fetching list:", err));
   }, []);
 
   useEffect(() => {
-    if (user) {
-      setTasks(list?.tasks);
-      fetch(`http://localhost:5000/api/tasks/${user.id}/${listId}`)
-        .then((res) => res.json())
-        .then((data) => setTasks(data || []))
-        .catch((err) => console.error("Error fetching to-do lists:", err));
-    }
-  }, [user, list]);
+  if (list?.tasks) {
+    setTasks(list.tasks);
+  }
+  }, [list]);
+
 
   useEffect(() => {
     if (debounceTasks) {
@@ -43,77 +44,69 @@ const useTodoListPage = () => {  const location = useLocation();
     }
   }, [debounceTasks]);
 
-  const tasksUpdateAPI = async (updatedTasks: Task[] | undefined) => {
+  const tasksUpdateAPI = async (updatedTasks: Task[]) => {
     setTasks(updatedTasks);
-    fetch(`http://localhost:5000/api/tasks/${user.id}/${listId}`, {
+    await fetch(`http://localhost:5000/api/tasks/${user.id}/${listId}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(updatedTasks),
     });
   };
 
-  const createNewTask = async (e?: React.MouseEvent<HTMLButtonElement>) => {
-    e?.preventDefault(); // ✅ This prevents the page reload
+  const createNewTask = (e?: React.MouseEvent<HTMLButtonElement>) => {
+    e?.preventDefault();
     e?.stopPropagation();
-
     const newTask: Task = {
       id: Date.now(),
-      title: `Task #${(tasks?.length || 0) + 1}`,
+      title: `Task #${tasks.length + 1}`,
       completed: false,
     };
-    const updatedTasks = [...(tasks || []), newTask];
-    // updateTasks(updatedTasks);
+    const updatedTasks = [...tasks, newTask];
     setTasks(updatedTasks);
   };
 
   const updateTask = (id: number, newTitle: string) => {
-    setTasks((prev) => {
-      const newTasks = prev?.map((task) =>
-        task.id === id ? { ...task, title: newTitle } : task
-      );
-      // updateTasks(newTasks);
-      return newTasks;
-    });
+    setTasks((prev) => prev.map((task) =>
+      task.id === id ? { ...task, title: newTitle } : task
+    ));
   };
 
   const toggleTask = (id: number) => {
-    setTasks((prev) => {
-      const newTasks = prev?.map((task) =>
-        task.id === id ? { ...task, completed: !task.completed } : task
-      );
-      // updateTasks(newTasks);
-      return newTasks;
-    });
+    setTasks((prev) => prev.map((task) =>
+      task.id === id ? { ...task, completed: !task.completed } : task
+    ));
   };
 
   const deleteTask = (id: number) => {
-    setTasks((prev) => {
-      const newTasks = prev?.filter((task) => task.id !== id);
-      // updateTasks(newTasks);
-      return newTasks;
-    });
+    setTasks((prev) => prev.filter((task) => task.id !== id));
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleDragEnd = (result: any) => {
+    if (!result.destination) return;
+
+    const newTasks = Array.from(tasks);
+    const [reordered] = newTasks.splice(result.source.index, 1);
+    newTasks.splice(result.destination.index, 0, reordered);
+
+    setTasks(newTasks); // will trigger debounce update
   };
 
   const calculateProgress = useCallback(() => {
-    if ((tasks?.length || 0) === 0) return 0;
-    const completed = tasks?.filter((t) => t.completed).length;
-
-    return Math.round(((completed || 0) / (tasks?.length || 1)) * 100);
+    if (tasks.length === 0) return 0;
+    const completed = tasks.filter((t) => t.completed).length;
+    return Math.round((completed / tasks.length) * 100);
   }, [tasks]);
 
   const handleListTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!list) {
-      return;
-    }
-    setTitle(e.target.value);
-    const updatedList = {
-      ...list,
-      title: e.target.value,
-    };
+    if (!list) return;
+    const newTitle = e.target.value;
+    setTitle(newTitle);
+
+    const updatedList = { ...list, title: newTitle };
     const updatedTodoLists = allTodoLists.map((l) =>
       l.id === updatedList.id ? updatedList : l
     );
-    console.log("debug", updatedTodoLists);
     setAllTodoLists(updatedTodoLists);
 
     fetch(`http://localhost:5000/api/todolists/${user.id}`, {
@@ -122,19 +115,19 @@ const useTodoListPage = () => {  const location = useLocation();
       body: JSON.stringify(updatedTodoLists),
     });
   };
+
   return {
-        list,
-        tasks,
-        title,
-        createNewTask,
-        updateTask,
-        toggleTask,
-        deleteTask,
-        calculateProgress,
-        handleListTitleChange,
-    };
-}
-    
-    
+    list,
+    tasks,
+    title,
+    createNewTask,
+    updateTask,
+    toggleTask,
+    deleteTask,
+    handleDragEnd,
+    calculateProgress,
+    handleListTitleChange,
+  };
+};
 
 export default useTodoListPage;
