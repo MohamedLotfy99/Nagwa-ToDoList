@@ -1,10 +1,10 @@
-# 📝 Nagwa Todo List App
+# <img src="./nagwaLogo.png" width="70" style="vertical-align: middle; margin-right: 5px;" alt="nagwa"> Nagwa Todo List App
 
 This project is my implementation of the **To-Do List task assigned by Nagwa**. It features a full-stack setup with user authentication, persistent data storage, and a responsive UI built with React and TailwindCSS.
 
 ---
 
-## 🚀 Setup Instructions
+## ⚠️ Setup Instructions ⚠️
 
 To run the app locally:
 
@@ -24,8 +24,11 @@ To run the app locally:
    cd .\Server-Side\
    npm install
    npm run dev
-
    ```
+
+   👇 is an example of how your terminal should look like (Remember to add `npm install` after `cd .\Server-Side\`)
+
+   ![Server-Side-Terminal](/server-terminal.png)
 
 4. **Start the client:**
 
@@ -35,8 +38,11 @@ To run the app locally:
    cd .\Client-Side\
    npm install
    npm run dev
-
    ```
+
+   👇 is an example of how your terminal should look like (Remember to add `npm install` after `cd .\Client-Side\`)
+
+   ![Client-Side-Terminal](/client-terminal.png)
 
 5. **Access the app**
 

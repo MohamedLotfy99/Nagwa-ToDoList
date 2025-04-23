@@ -13,15 +13,26 @@ import SignupPage from "./pages/SignupPage/SignupPage.tsx";
 import Layout from "./pages/Layout.tsx";
 import TodoListPage from "./pages/TodoListPage/TodoListPage.tsx";
 
+// Setting up the router with route definitions
 const router = createBrowserRouter([
   {
-    element: <Layout />,
-    errorElement: <NotFoundPage />,
+    // Root element where all the routes will be nested
+    element: <Layout />, // The Layout component will be the wrapper for all routes
+    errorElement: <NotFoundPage />, // Show NotFoundPage if no matching route is found
     children: [
+      // The default route, immediately redirects to "/Login"
       { path: "/", element: <Navigate to="/Login" replace /> },
+
+      // Login route, renders LoginPage component
       { path: "/Login", element: <LoginPage /> },
+
+      // Home route, renders HomePage component
       { path: "/Home", element: <HomePage /> },
+
+      // Signup route, renders SignupPage component
       { path: "/Signup", element: <SignupPage /> },
+
+      // TodoList route with dynamic parameter ":id", renders TodoListPage component
       { path: "/TodoList/:id", element: <TodoListPage /> },
     ],
   },

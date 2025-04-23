@@ -1,54 +1,58 @@
-import express from 'express'
-import cors from 'cors'
-import bodyParser from 'body-parser'
-import fs from 'fs'
-import {User} from './types' // Assuming you have a User type defined in a separate file
-
+import express from 'express';
+import cors from 'cors';
+import bodyParser from 'body-parser';
+import fs from 'fs';
+import { User } from './types'; 
 
 const app = express();
 const PORT = 5000;
-const USERS_FILE = "./src/users.json";
+const USERS_FILE = "./src/users.json"; // Path to your local JSON-based "database"
 
-app.use(cors());
-app.use(bodyParser.json());
+// Middleware setup
+app.use(cors()); // Enable Cross-Origin Resource Sharing
+app.use(bodyParser.json()); // Parse JSON bodies
 
+// Utility: Read users from the file
 function readUsers() {
   return JSON.parse(fs.readFileSync(USERS_FILE, 'utf-8')) as User[];
 }
 
+// Utility: Save users back to the file
 function saveUsers(users: User[]) {
   fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
 }
 
-// Login route
-app.post("/api/login",(req, res) => {
+// ==============================
+// ========== ROUTES ===========
+// ==============================
+
+// -------- LOGIN --------
+app.post("/api/login", (req, res) => {
   try {
     const { email, password } = req.body;
     const users = readUsers();
-    let updatedUsers;
-    // const users = Array.isArray(data) ? data : data?.users;
 
     if (!Array.isArray(users)) {
       res.status(500).json({ message: "Invalid user data structure" });
-      return
+      return;
     }
-    
-    const user = users.find(
-      (u) => u.email === email && u.password === password
-    );
+
+    // Find user with matching credentials
+    const user = users.find(u => u.email === email && u.password === password);
     if (user) {
       let newUser = user;
-      const newId= Date.now();
-      if (!user.id){
-        
-        updatedUsers = users.map((u) =>
-          u.email === email ? { ...u, id: newId, todoLists: []} : u
+
+      // If user has no ID yet, assign one and update user data
+      if (!user.id) {
+        const newId = Date.now();
+        const updatedUsers = users.map(u =>
+          u.email === email ? { ...u, id: newId, todoLists: [] } : u
         );
         saveUsers(updatedUsers);
-        newUser = {...user, id: newId, todoLists: []};
- // Save full array back to the file
+        newUser = { ...user, id: newId, todoLists: [] };
       }
-      res.json( {user: newUser });
+
+      res.json({ user: newUser });
     } else {
       res.status(401).json({ message: "Invalid credentials" });
     }
@@ -58,21 +62,20 @@ app.post("/api/login",(req, res) => {
   }
 });
 
-// Sign-up route
+// -------- SIGNUP --------
 app.post("/api/signup", (req, res) => {
   const { email, password, name } = req.body;
   const users = readUsers();
 
-  // const users = Array.isArray(data) ? data : data.users;
-
   if (!Array.isArray(users)) {
-     res.status(500).json({ message: "Invalid users data" });
-     return
+    res.status(500).json({ message: "Invalid users data" });
+    return;
   }
 
-  if (users.find((u) => u.email === email)) {
-     res.status(400).json({ success: false, message: "Email already exists" });
-     return
+  // Reject if email already exists
+  if (users.find(u => u.email === email)) {
+    res.status(400).json({ success: false, message: "Email already exists" });
+    return;
   }
 
   const newUser = {
@@ -80,62 +83,62 @@ app.post("/api/signup", (req, res) => {
     email,
     password,
     id: Date.now(),
-    todoLists: [], // Initialize with an empty array of to-do lists
+    todoLists: [], // Start with an empty to-do list
   };
 
   users.push(newUser);
-  saveUsers(users); // Save full array back to the file
+  saveUsers(users);
 
   res.json({
     success: true,
-    user: { id: newUser.id, email: newUser.email, name: newUser.name }
+    user: { id: newUser.id, email: newUser.email, name: newUser.name },
   });
 });
 
-// Get to-do lists for a user
+// -------- GET TO-DO LISTS BY USER --------
 app.get("/api/todolists/:userId", (req, res) => {
   const { userId } = req.params;
   const users = readUsers();
-  const user = users.find((u) => u.id === Number(userId));
+  const user = users.find(u => u.id === Number(userId));
 
   if (!user) {
-     res.status(404).json({ message: "User not found" });
-     return
+    res.status(404).json({ message: "User not found" });
+    return;
   }
 
   res.json(user.todoLists || []);
 });
 
+// -------- GET SPECIFIC TO-DO LIST --------
 app.get("/api/todolists/:userId/:listId", (req, res) => {
   const { userId, listId } = req.params;
   const users = readUsers();
-  const user = users.find((u) => u.id === Number(userId));
+  const user = users.find(u => u.id === Number(userId));
 
   if (!user) {
-     res.status(404).json({ message: "User not found" });
-     return
+    res.status(404).json({ message: "User not found" });
+    return;
   }
 
-  const list = user.todoLists.find((l) => l.id === Number(listId));
+  const list = user.todoLists.find(l => l.id === Number(listId));
   if (!list) {
-      res.status(404).json({ message: "List not found" });
-      return
-    }
+    res.status(404).json({ message: "List not found" });
+    return;
+  }
 
   res.json(list || []);
 });
 
-// Save updated to-do lists for a user
+// -------- UPDATE USER'S TO-DO LISTS --------
 app.post("/api/todolists/:userId", (req, res) => {
   const { userId } = req.params;
   const updatedLists = req.body;
-
   const users = readUsers();
-  const userIndex = users.findIndex((u) => u.id === Number(userId));
+  const userIndex = users.findIndex(u => u.id === Number(userId));
 
   if (userIndex === -1) {
-     res.status(404).json({ message: "User not found" });
-     return
+    res.status(404).json({ message: "User not found" });
+    return;
   }
 
   users[userIndex].todoLists = updatedLists;
@@ -143,40 +146,25 @@ app.post("/api/todolists/:userId", (req, res) => {
   res.json({ success: true });
 });
 
-app.post("/api/todolists/:userId", (req, res) => {
-  const { userId } = req.params;
-  const updatedLists = req.body;
-
-  const users = readUsers();
-  const userIndex = users.findIndex((u) => u.id === Number(userId));
-
-  if (userIndex === -1) {
-     res.status(404).json({ message: "User not found" });
-      return
-  }
-
-  users[userIndex].todoLists = updatedLists;
-  saveUsers(users);
-  res.json({ success: true });
-});
-
+// -------- UPDATE TASKS FOR A SPECIFIC LIST --------
 app.post("/api/tasks/:userId/:listId", (req, res) => {
   const { userId, listId } = req.params;
   const updatedTasks = req.body;
-
   const users = readUsers();
-  const userIndex = users.findIndex((u) => u.id === Number(userId));
-  
-  if (userIndex === -1) {
-     res.status(404).json({ message: "User not found" });
-     return
-  }
-  
-  const listIndex = users[userIndex]?.todoLists?.findIndex((list) => list.id === Number(listId));
+  const userIndex = users.findIndex(u => u.id === Number(userId));
 
-    if (listIndex === -1) {
-     res.status(404).json({ message: "List not found" });
-      return
+  if (userIndex === -1) {
+    res.status(404).json({ message: "User not found" });
+    return;
+  }
+
+  const listIndex = users[userIndex]?.todoLists?.findIndex(
+    list => list.id === Number(listId)
+  );
+
+  if (listIndex === -1) {
+    res.status(404).json({ message: "List not found" });
+    return;
   }
 
   users[userIndex].todoLists[listIndex].tasks = updatedTasks;
@@ -184,43 +172,45 @@ app.post("/api/tasks/:userId/:listId", (req, res) => {
   res.json({ success: true });
 });
 
+// -------- GET TASKS FOR A SPECIFIC LIST --------
 app.get("/api/tasks/:userId/:listId", (req, res) => {
   const { userId, listId } = req.params;
   const users = readUsers();
-  const user = users.find((u) => u.id === Number(userId));
+  const user = users.find(u => u.id === Number(userId));
 
   if (!user) {
-     res.status(404).json({ message: "User not found" });
-     return
+    res.status(404).json({ message: "User not found" });
+    return;
   }
 
-  const list = user.todoLists.find((l) => l.id === Number(listId));
+  const list = user.todoLists.find(l => l.id === Number(listId));
 
   if (!list) {
-     res.status(404).json({ message: "List not found" });
-     return
+    res.status(404).json({ message: "List not found" });
+    return;
   }
+
   res.json(list.tasks || []);
 });
 
-
+// -------- ROOT ROUTE FOR DEBUGGING --------
 app.get("/", (req, res) => {
   try {
     const users = readUsers();
-    // console.log("SERVER DEBUG", users);
-    // const users = Array.isArray(data) ? data : data.users;
 
     if (!Array.isArray(users)) {
       throw new Error("Users data is not a valid array");
     }
 
-    const userList = users.map((user) => JSON.stringify(user)).join("\n");
+    const userList = users.map(user => JSON.stringify(user)).join("\n");
     res.type("text/plain").send(userList);
   } catch (err) {
     console.error("Error reading users:", err);
     res.status(500).send("Error loading users");
   }
 });
+
+// -------- START SERVER --------
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
