@@ -16,6 +16,8 @@ const useTodoListPage = () => {
   
   const [selectedTaskIndex, setSelectedTaskIndex] = useState<number | null>(null);
 
+  const [isEditing, setIsEditing] = useState(false);
+
 useEffect(() => {
   const handleKeyDown = (e: KeyboardEvent) => {
     
@@ -39,7 +41,7 @@ useEffect(() => {
         );
       }
 
-      if (e.key === " ") {
+      if (!isEditing && e.key === " ") {
         e.preventDefault();
         const task = tasks[selectedTaskIndex];
         if (task) toggleTask(task.id);
@@ -67,7 +69,7 @@ useEffect(() => {
 
   document.addEventListener("keydown", handleKeyDown);
   return () => document.removeEventListener("keydown", handleKeyDown);
-}, [tasks, selectedTaskIndex]);
+}, [tasks, selectedTaskIndex, isEditing]);
 
 
   useEffect(() => {
@@ -164,6 +166,8 @@ useEffect(() => {
     tasks,
     title,
     selectedTaskIndex,
+    isEditing,
+    setIsEditing,
     setSelectedTaskIndex,
     createNewTask,
     updateTask,

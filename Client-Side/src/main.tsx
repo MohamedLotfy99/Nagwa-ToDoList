@@ -10,7 +10,7 @@ import HomePage from "./pages/HomePage/HomePage.tsx";
 import LoginPage from "./pages/LoginPage/LoginPage.tsx";
 import NotFoundPage from "./pages/NotFoundPage.tsx";
 import SignupPage from "./pages/SignupPage/SignupPage.tsx";
-import Layout from "./Layout.tsx";
+import Layout from "./pages/Layout.tsx";
 import TodoListPage from "./pages/TodoListPage/TodoListPage.tsx";
 
 const router = createBrowserRouter([

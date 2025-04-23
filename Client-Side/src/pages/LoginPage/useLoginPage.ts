@@ -25,12 +25,11 @@ const useLoginPage = () => {
       });
 
       const data = await res.json();
-
+      
       if (res.ok) {
+        sessionStorage.setItem("user", JSON.stringify(data.user));
         if (rememberMe) {
           localStorage.setItem("user", JSON.stringify(data.user));
-        } else {
-          sessionStorage.setItem("user", JSON.stringify(data.user));
         }
         navigate("/Home", { state: { user: data.user } }); // Pass user data to HomePage
       } else {

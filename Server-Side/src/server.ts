@@ -1,8 +1,8 @@
 import express from 'express'
-import { Request, Response } from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import fs from 'fs'
+import {User} from './types' // Assuming you have a User type defined in a separate file
 
 
 const app = express();
@@ -11,26 +11,6 @@ const USERS_FILE = "./src/users.json";
 
 app.use(cors());
 app.use(bodyParser.json());
-
-interface Task {
-  id: number;
-  name: string;
-  completed: boolean;
-}
-
-interface List{
-  id: number;
-  name: string;
-  tasks: Array<Task>;
-}
-
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  password: string;
-  todoLists: Array<List>;
-}
 
 function readUsers() {
   return JSON.parse(fs.readFileSync(USERS_FILE, 'utf-8')) as User[];
@@ -77,22 +57,6 @@ app.post("/api/login",(req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
-
-// app.post("/api/updateUser/", (req, res) => {
-//   const {userEmail} = req.body;
-//   const users = readUsers();
-
-//   if (!Array.isArray(users)) {
-//      res.status(500).json({ message: "Invalid users data" });
-//      return
-//   }
-//   const updatedUsers = users.map((u) => 
-//     u.email === userEmail ? { ...u, id: Date.now(), todoLists: []} : u
-//   );
-
-//   saveUsers(updatedUsers); // Save full array back to the file
-// });
-
 
 // Sign-up route
 app.post("/api/signup", (req, res) => {

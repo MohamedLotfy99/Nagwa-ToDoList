@@ -8,6 +8,7 @@ const TodoListPage = () => {
     tasks,
     title,
     selectedTaskIndex,
+    setIsEditing,
     setSelectedTaskIndex,
     createNewTask,
     updateTask,
@@ -76,6 +77,8 @@ const TodoListPage = () => {
                         id={`task-input-${index}`}
                         className="flex-1 mx-2 border-b min-w-[2px] border-gray-300 focus:outline-none"
                         placeholder="New Task"
+                        onFocus={() => setIsEditing(true)}
+                        onBlur={() => setIsEditing(false)}
                         value={task.title}
                         onChange={(e) => updateTask(task.id, e.target.value)}
                       />
@@ -101,7 +104,9 @@ const TodoListPage = () => {
         className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center space-x-2"
       >
         <span className="text-white text-2xl font-bold">+</span>
-        <span className="text-white text-sm mt-1.5">Add Task</span>
+        <span className="text-white text-sm mt-1.5 cursor-pointer">
+          Add Task
+        </span>
       </button>
     </div>
   );
